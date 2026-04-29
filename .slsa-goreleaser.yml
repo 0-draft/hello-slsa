@@ -8,7 +8,7 @@ flags:
   - -trimpath
 
 ldflags:
-  - "-X main.Version={{ .Env.GITHUB_REF_NAME }}"
+  - "-X main.Version={{ .Env.VERSION }}"
   - "-s -w"
 
 goos: linux
