@@ -1,0 +1,23 @@
+# Local build output
+hello-slsa
+hello-slsa-*
+!hello-slsa-*.intoto.jsonl.example
+
+# Verifier binaries downloaded by verify-real-artifact/run.sh
+slsa-verifier
+slsa-verifier-*
+!slsa-verifier-*.example
+
+# Provenance attestations (regenerated, not committed)
+*.intoto.jsonl
+
+# Go
+/vendor/
+*.exe
+*.test
+*.out
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

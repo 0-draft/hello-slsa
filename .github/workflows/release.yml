@@ -1,0 +1,45 @@
+name: Release with SLSA L3 Provenance
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions: read-all
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: write
+      actions: read
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.1.0
+    with:
+      go-version: "1.26"
+      config-file: .slsa-goreleaser.yml
+      upload-assets: true
+
+  verify:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install slsa-verifier
+        uses: slsa-framework/slsa-verifier/actions/installer@v2.7.1
+
+      - name: Download artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build.outputs.go-binary-name }}
+
+      - name: Download provenance
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build.outputs.go-provenance-name }}
+
+      - name: Verify
+        run: |
+          slsa-verifier verify-artifact \
+            "${{ needs.build.outputs.go-binary-name }}" \
+            --provenance-path "${{ needs.build.outputs.go-provenance-name }}" \
+            --source-uri "github.com/${{ github.repository }}" \
+            --source-tag "${{ github.ref_name }}"

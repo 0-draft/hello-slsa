@@ -1,0 +1,17 @@
+version: 1
+
+env:
+  - GO111MODULE=on
+  - CGO_ENABLED=0
+
+flags:
+  - -trimpath
+
+ldflags:
+  - "-X main.Version={{ .Env.GITHUB_REF_NAME }}"
+  - "-s -w"
+
+goos: linux
+goarch: amd64
+
+binary: hello-slsa-{{ .Os }}-{{ .Arch }}
